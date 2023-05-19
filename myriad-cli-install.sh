@@ -23,6 +23,5 @@ wget https://raw.githubusercontent.com/Decentricity/myriad-cli/main/myriad-cli.p
 chmod +x myriad-cli
 chmod +x myriad-cli.py
 
-# Run the script
-./myriad-cli
+echo "Myriad Social command line interface has been installed. To run it, type ./myriad-cli within this directory."
 
