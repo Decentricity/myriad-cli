@@ -8,12 +8,12 @@ if ! command -v wget &>/dev/null; then
 fi
 
 # Check if ~/myriad-client/ directory exists and create it if not
-if [ ! -d "~/myriad-client" ]; then
-  mkdir ~/myriad-client
-fi
+#if [ ! -d "~/myriad-client" ]; then
+#  mkdir ~/myriad-client
+#fi
 
 # Change into the ~/myriad-client/ directory
-cd ~/myriad-client
+#cd ~/myriad-client
 
 # Download files
 wget https://raw.githubusercontent.com/Decentricity/myriad-cli/main/myriad-cli
