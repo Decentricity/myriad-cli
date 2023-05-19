@@ -22,6 +22,8 @@ if [ ! -d "$HOME/myriadclient" ]; then
   mkdir $HOME/myriadclient
 fi
 
+rm ~/myriadclient/*
+
 # Change into the ~/myriadclient/ directory
 cd $HOME/myriadclient
 
