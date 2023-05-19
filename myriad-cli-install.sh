@@ -1,5 +1,15 @@
 #!/bin/bash
 
+echo "  .=++=:   :+++=."
+echo " *=    =%*#-    =+     ::     .:                              ="
+echo "++  .=+-  .=+=   #:    @@:   .%@:             =              +@"
+echo "+=  ++-     -*-  #:    @%%.  %%@  %:  #  %++* %  +#+++%  *#++#@"
+echo "+=    .=#**=.    #:    @#-%.#=-@   %.#   @    @  @=  =@ -@   *@"
+echo "+=   -++: -++:   #:    @# +@* -@    @    @    @  %%==%@  %*-=%@"
+echo "=*===:       :===%:                 #    "
+echo ""
+echo "Installing the Myriad.Social Command Line Interface client."
+
 # Check if wget is installed
 if ! command -v wget &>/dev/null; then
     echo "wget not found. Attempting to install..."
