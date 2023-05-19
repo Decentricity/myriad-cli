@@ -147,6 +147,7 @@ else:
     
 
 
+
 pages="10"
 # exampl fr testin
 twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
@@ -200,6 +201,11 @@ def filter_user_posts(posts, user_id):
     else:
         return [post for post in posts['data']]
 
+import art
+import requests
+import time
+
+
 
 
 
@@ -238,6 +244,7 @@ def display_posts(posts):
             imagelist=post.get('asset').get('images')
             imageurl=imagelist[0]['original']
             print(f"Image: {imageurl}")
+            
             
             # Download the image and save it locally
             response = requests.get(imageurl, stream=True)
@@ -332,30 +339,10 @@ def create_myriad_post(title, text_blocks, platform='myriad', visibility='public
     ])
 
     post_data = {
-        "title": title,
-        "text": text,
         "rawText": '\n'.join(text_blocks),
-        "platform": platform,
-        "createdAt": createdAt,
-        "visibility": visibility,
-        "createdBy": created_by,
-        "metric": {
-            "upvotes": 0,
-            "downvotes": 0,
-            "discussions": 0,
-            "debates": 0,
-            "comments": 0,
-            "tips": 0,
-        },
-        "isNSFW": False,
-        "mentions": [],
-        "selectedUserIds": [],
-        "selectedTimelineIds": [],
-        "banned": False,
-        "originCreatedAt": createdAt,
-        "createdAt": createdAt,
-        "visibility": visibility,
-        "createdBy": created_by,
+        "text": text,
+        "status": "published",
+        "selectedTimelineIds": []
     }
     
     print(post_data)
@@ -390,7 +377,14 @@ while not command=="exit":
         get_user_notifications()
         
     elif command=="w":
-        content = ["First paragraph", "Second paragraph", "Third paragraph"]
+        print("Please enter the post below. Write DONE on a single line when done.")
+        
+        con=""
+        content=[]
+        while not con=="DONE":
+            con=input("> ")
+            if not con=="DONE": content.append(con)
+        #content = ["First paragraph", "Second paragraph", "Third paragraph"]
         create_myriad_post("My Post Title", content)
         
     elif command=="ps" or command.lower()=="pages":
@@ -450,7 +444,6 @@ while not command=="exit":
 # Display the imported post data
 #    if imported_post_data:
 #        print(json.dumps(imported_post_data, indent=2))
-
 
 
 
