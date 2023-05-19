@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Check if python3 is installed
+if ! command -v python3 &>/dev/null; then
+    echo "python3 not found. Attempting to install..."
+    sudo apt-get update
+    sudo apt-get install python3
+fi
+
+# Check if pip3 is installed
+if ! command -v pip3 &>/dev/null; then
+    echo "pip3 not found. Attempting to install..."
+    sudo apt-get update
+    sudo apt-get install python3-pip
+fi
+
+# List of python dependencies
+declare -a arr=("requests" "pywhatkit" "pillow")
+
+for i in "${arr[@]}"
+do
+    pip_dependency=$(pip3 list | grep $i)
+    if [ -z "$pip_dependency" ]; then
+        echo "The $i module is not installed. Attempting to install..."
+        pip3 install $i
+    else
+        echo ""
+    fi
+done
+
+
+python3 myriad-cli.py
+
