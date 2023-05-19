@@ -28,6 +28,8 @@ do
     fi
 done
 
+# Change into the ~/myriadclient/ directory
+cd $HOME/myriadclient
 
 python3 myriad-cli.py
 
