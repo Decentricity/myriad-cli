@@ -26,8 +26,8 @@ fi
 cd $HOME/myriadclient
 
 # Download files
-wget https://raw.githubusercontent.com/Decentricity/myriad-cli/main/myriad-cli
-wget https://raw.githubusercontent.com/Decentricity/myriad-cli/main/myriad-cli.py
+wget --no-verbose https://raw.githubusercontent.com/Decentricity/myriad-cli/main/myriad-cli
+wget --no-verbose https://raw.githubusercontent.com/Decentricity/myriad-cli/main/myriad-cli.py
 
 # Make files executable
 chmod +x myriad-cli
