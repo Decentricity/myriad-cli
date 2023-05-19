@@ -201,9 +201,6 @@ def filter_user_posts(posts, user_id):
     else:
         return [post for post in posts['data']]
 
-import art
-import requests
-import time
 
 
 
