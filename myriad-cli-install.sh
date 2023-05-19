@@ -39,5 +39,10 @@ grep -qxF 'export PATH=$HOME/myriadclient:$PATH' $HOME/.bashrc || echo 'export P
 # Source .bashrc to update the current shell
 source $HOME/.bashrc
 
-echo "myriad-cli is now in your path. You can run it with the command: myriad-cli."
+echo "myriad-cli is now in your path. You can run it with the command: "
+echo "              myriad-cli"
+echo: ""
 echo "If the command does not work, close and reopen your terminal session."
+echo "If it still doesn't work, you can run the script directly by typing:"
+echo "              ~/myriadclient/myriad-cli"
+
