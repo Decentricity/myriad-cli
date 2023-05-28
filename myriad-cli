@@ -33,7 +33,7 @@ fi
 
 # List of python dependencies
 declare -a arr=("requests" "pywhatkit" "pillow" "transformers" "torch")
-pip install art
+
 for i in "${arr[@]}"
 do
     pip_dependency=$(pip3 list | grep $i)
@@ -44,7 +44,7 @@ do
         echo ""
     fi
 done
-
+pip install art
 # Change into the ~/myriadclient/ directory
 cd $HOME/myriadclient
 
