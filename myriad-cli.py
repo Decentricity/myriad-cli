@@ -143,11 +143,23 @@ if not anonmode:
 else:
     un=""
     
+aimode=False
+ai_=input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
+if ai_=="y" or ai_.lower()=="yes" or ai_=="Y": aimode=True
     
     
 
+if aimode: 
+    from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
+    model_name = "deepset/tinyroberta-squad2"
 
-
+    central_dogma = """
+    I don't know anything yet.
+    """
+    # b) Load model & tokenizer
+    model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    
 pages="10"
 # exampl fr testin
 twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
@@ -201,6 +213,9 @@ def filter_user_posts(posts, user_id):
     else:
         return [post for post in posts['data']]
 
+import art
+import requests
+import time
 
 
 
@@ -219,9 +234,9 @@ def flatten(data):
         else:
             return ''
 
-
+aibuffer=""
 def display_posts(posts):
-    
+    global aibuffer
     post_text=""
     for i, post in enumerate(posts, 1):
         
@@ -235,7 +250,7 @@ def display_posts(posts):
             # If it's not valid JSON, treat it as plain text
             flattened_data = data_str
         print(f"Text: {flattened_data}")
-
+        aibuffer=f"{aibuffer}\n{flattened_data}"
         
         try:
             imagelist=post.get('asset').get('images')
@@ -263,6 +278,20 @@ def display_posts(posts):
         print("----------")
         post_text=post_text+f"{post.get('text')}\n"
     return post_text
+
+
+def ai(user_input):
+    global model_name
+    global aibuffer
+    # a) Get predictions
+    nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
+    QA_input = {
+        'question': user_input,
+        'context': aibuffer
+    }
+    res = nlp(QA_input)
+    print(res)
+    print(res['answer'])
 
 
 
@@ -357,6 +386,11 @@ while not command=="exit":
 
     print("p: show posts\nf: filter posts by Myriad username")
     if not anonmode: print("n: notifications\ni: import a Twitter post\nw: write a Myriad post")
+    if aibuffer=="": 
+        buffercheck="There is nothing in buffer, you should go see some posts first."
+    else:
+        buffercheck=""
+    if aimode: print(f"ai: Ask the AI something. {buffercheck}")
     print(f"exit: Go back to the shell.\n\nCurrently searching within last {pages} posts. Type ps to change this setting.")
     command = input(f"> {bcolors.ENDC}")
     print('♥' * width)
@@ -372,6 +406,11 @@ while not command=="exit":
     
     elif command=="n" or command.lower()=="notifications":
         get_user_notifications()
+        
+    elif command.lower()=="ai":
+        print("What do you want to ask the AI?")
+        con=input("> ")
+        ai(con)
         
     elif command=="w":
         print("Please enter the post below. Write DONE on a single line when done.")
