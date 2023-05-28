@@ -19,7 +19,7 @@ It's retro af and pretty quick.
 
 UPDATE: I haf installed the self-hosted Myriad AI here. Just enable after logging in if you wan to use it. 
 
-WARNINK: This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.
+WARNINK: This will install a relatively large LLM on your system. Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. Tested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.
 
 To do:
 
