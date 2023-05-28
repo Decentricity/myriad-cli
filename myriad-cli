@@ -32,7 +32,7 @@ fi
 
 
 # List of python dependencies
-declare -a arr=("requests" "pywhatkit" "pillow" "art")
+declare -a arr=("requests" "pywhatkit" "pillow" "art" "transformers" "torch")
 
 for i in "${arr[@]}"
 do
