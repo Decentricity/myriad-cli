@@ -32,8 +32,8 @@ fi
 
 
 # List of python dependencies
-declare -a arr=("requests" "pywhatkit" "pillow" "art" "transformers" "torch")
-
+declare -a arr=("requests" "pywhatkit" "pillow" "transformers" "torch")
+pip install art
 for i in "${arr[@]}"
 do
     pip_dependency=$(pip3 list | grep $i)
