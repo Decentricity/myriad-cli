@@ -14,8 +14,25 @@ if ! command -v pip3 &>/dev/null; then
     sudo apt-get install python3-pip
 fi
 
+
+# Check if python3-tk is installed
+if ! command -v python3-tk &>/dev/null; then
+    echo "python3-tk not found. Attempting to install..."
+    sudo apt-get update
+    sudo apt-get install python3-tk
+fi
+
+# Check if python3-dev is installed
+if ! command -v python3-dev &>/dev/null; then
+    echo "python3-dev not found. Attempting to install..."
+    sudo apt-get update
+    sudo apt-get install python3-dev
+fi
+
+
+
 # List of python dependencies
-declare -a arr=("requests" "pywhatkit" "pillow")
+declare -a arr=("requests" "pywhatkit" "pillow" "art")
 
 for i in "${arr[@]}"
 do
