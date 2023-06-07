@@ -84,9 +84,12 @@ do
 done
 pip install art
 
-echo "myriad-cli is now in your path. You can run it with the command: "
+echo "If there are no errors, myriad-cli is now in your path. You can run it with the command: "
 echo "              myriad-cli"
 echo ""
 echo "If the command does not work, close and reopen your terminal session."
 echo "If it still doesn't work, you can run the script directly by typing:"
 echo "              ~/myriadclient/myriad-cli"
+echo ""
+echo "If you are still experiencing problems, you can rerun the curl script with sudo:"
+echo "              curl -sSL https://myriad.social/cli | sudo bash"
