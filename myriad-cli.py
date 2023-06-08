@@ -1,13 +1,13 @@
 import requests
 import json
 import os
-import os
 import subprocess
 import requests
 import time
 import random
 import pywhatkit as kit
 from PIL import Image
+from getpass import getpass
 
 import html
 
@@ -44,6 +44,22 @@ try:
 except:
     width=64
 print('♥' * width)
+
+# Define the filename
+filename = "settings.json"
+
+# Check if file exists
+if os.path.isfile(filename):
+    with open(filename, "r") as file:
+        settings = json.load(file)
+        at = settings.get("at", None)
+        un = settings.get("un", None)
+        aimode = settings.get("aimode", None)
+else:
+    at = None
+    un = None
+    aimode = None
+
 myriadlogo="""
   .=++=:   :+++=.
  *=    =%*#-    =+     ::     .:                              =
@@ -143,10 +159,14 @@ if not anonmode:
 else:
     un=""
     
-aimode=False
-ai_=input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
-if ai_=="y" or ai_.lower()=="yes" or ai_=="Y": aimode=True
-
+if aimode is None:
+    ai_=input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
+    if ai_=="y" or ai_.lower()=="yes" or ai_=="Y": 
+        aimode=True
+# Write back at, un, and aimode to the settings file
+with open(filename, "w") as file:
+    json.dump({"at": at, "un": un, "aimode": aimode}, file)
+    
 if aimode: 
     import subprocess
     import pkg_resources
@@ -170,7 +190,6 @@ if aimode:
     # b) Load model & tokenizer
     model = AutoModelForQuestionAnswering.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-
     
 pages="10"
 # exampl fr testin
