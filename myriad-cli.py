@@ -132,23 +132,13 @@ except (FileNotFoundError, KeyError):
     un = None
     aimode = None
 
-    
-pages="10"
-# exampl fr testin
-twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
+if at:
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + at,
+    }
 
-
-base_url = "https://api.myriad.social"
-
-base_url = "https://api.myriad.social"
-
-headers = {
-    'accept': 'application/json',
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + at,
-}
-
-base_url = "https://api.myriad.social"
 def search_user(username):
     search_url = f"{base_url}/people/search"
     response = requests.get(search_url, params={"id": user_id})
@@ -319,7 +309,8 @@ def create_myriad_post(title, text_blocks, platform='myriad', visibility='public
     else:
         print(f"Error creating post: {response.status_code}")
 
-    
+
+base_url = "https://api.myriad.social"
     
 # Check if there are command line arguments
 if len(sys.argv) > 1:
@@ -462,6 +453,20 @@ if not un:
         else:
             un = ""
 
+pages="10"
+# exampl fr testin
+twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
+
+
+base_url = "https://api.myriad.social"
+
+base_url = "https://api.myriad.social"
+
+headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + at,
+}
 if aimode is None:
     ai_ = input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
     if ai_ == "y" or ai_.lower() == "yes" or ai_ == "Y":
