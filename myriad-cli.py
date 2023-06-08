@@ -75,7 +75,7 @@ Command Line Interface Client for https://app.myriad.social"""
 print(f"{bcolors.PURPLE}{myriadlogo}{bcolors.ENDC}")
 print('♥' * width)
 
-while user_email=="":
+if un: while user_email=="":
     print(f"{bcolors.BOLD}Please enter your Myriad email or type anon to try Myriad anonymously.{bcolors.ENDC}{bcolors.CYAN}\nIf you do not have a Myriad account, you can create one by going to https://app.myriad.social/login and clicking the Email button.\n{bcolors.BLUE}If you already have a Myriad account that you created with a crypto wallet, go to https://app.myriad.social/settings?section=email to add an email account. \n{bcolors.RED}For security reasons, the CLI client does not support wallet logins yet. (It will. Wen? SOON)")
     print(f"\n{bcolors.ENDC}{bcolors.BOLD}Enter your Myriad email, or 'anon', below:")
     user_email = input("> ")
@@ -125,7 +125,7 @@ def authenticate(token):
         return response.json()
     return None
     
-if not anonmode:
+if un and not anonmode:
 # Send a magic link to the user's email address
     try:
         statcode=send_magic_link(user_email, callback_url)
@@ -149,12 +149,12 @@ if not anonmode:
 
 
 
-if not anonmode: 
+if not at and not anonmode: 
     at=(accesstoken.get('token').get('accessToken'))
 else:
     at=""
 #print(at)
-if not anonmode: 
+if not not un and not anonmode: 
     un=(accesstoken.get('user').get('username'))
 else:
     un=""
