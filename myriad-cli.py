@@ -13,6 +13,30 @@ import html
 
 from datetime import datetime
 
+def initialize_ai():
+    global REQUIRED_PACKAGES, model_name, central_dogma, model, tokenizer
+
+    import subprocess
+    import pkg_resources
+    from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
+
+    REQUIRED_PACKAGES = ['transformers', 'torch']
+    model_name = "deepset/tinyroberta-squad2"
+    central_dogma = "I don't know anything yet."
+
+    for package in REQUIRED_PACKAGES:
+        try:
+            dist = pkg_resources.get_distribution(package)
+            print('{} ({}) is installed'.format(dist.key, dist.version))
+        except pkg_resources.DistributionNotFound:
+            print('{} is NOT installed. Installing...'.format(package))
+            subprocess.call(['pip', 'install', package])
+
+    # Load model & tokenizer
+    model = AutoModelForQuestionAnswering.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+
 def import_twitter_post(twitter_url, importer, selected_timeline_ids):
     base_url = "https://api.myriad.social"
     api_endpoint = f"{base_url}/user/posts/import"
@@ -237,29 +261,10 @@ if aimode is None:
 with open(filename, "w") as file:
     json.dump({"at": at, "un": un, "aimode": aimode}, file)
 
+
 if aimode:
-    import subprocess
-    import pkg_resources
+    initialize_ai()
 
-    REQUIRED_PACKAGES = ['transformers', 'torch']
-
-    for package in REQUIRED_PACKAGES:
-        try:
-            dist = pkg_resources.get_distribution(package)
-            print('{} ({}) is installed'.format(dist.key, dist.version))
-        except pkg_resources.DistributionNotFound:
-            print('{} is NOT installed. Installing...'.format(package))
-            subprocess.call(['pip', 'install', package])
-
-    from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
-    model_name = "deepset/tinyroberta-squad2"
-
-    central_dogma = """
-    I don't know anything yet.
-    """
-    # b) Load model & tokenizer
-    model = AutoModelForQuestionAnswering.from_pretrained(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
     
 pages="10"
 # exampl fr testin
