@@ -79,6 +79,191 @@ def import_twitter_post(twitter_url, importer, selected_timeline_ids):
         print(f"Error importing Twitter post: {response.status_code}")
         print(response.text)
         return None
+pages="10"
+# exampl fr testin
+twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
+
+
+base_url = "https://api.myriad.social"
+
+base_url = "https://api.myriad.social"
+
+headers = {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + at,
+}
+
+base_url = "https://api.myriad.social"
+def search_user(username):
+    search_url = f"{base_url}/people/search"
+    response = requests.get(search_url, params={"id": user_id})
+
+    if response.status_code == 200:
+        users = response.json()
+        for user in users:
+            if user.get("username") == username:
+                return user
+    return None
+def user_id(username):
+    api_url = f"{base_url}/users/{username}"
+    print(api_url)
+    response = requests.get(api_url)
+    print(response)
+    if response.status_code == 200:
+        data = response.json()
+        user_id = data["id"]
+        print(f"User ID for {username}: {user_id}")
+        return user_id
+    else:
+        print(f"Error: {response.status_code}")
+        
+def get_all_posts():
+    posts_url = f"{base_url}/user/posts?pageLimit={pages}" #?page_number=
+    response = requests.get(posts_url)
+
+    if response.status_code == 200:
+        return response.json()
+    return None
+
+def filter_user_posts(posts, user_id):
+    if not user_id=="": 
+        return [post for post in posts['data'] if post.get("createdBy") == str(user_id)]
+    else:
+        return [post for post in posts['data']]
+
+import art
+import requests
+import time
+
+
+
+
+
+def flatten(data):
+    if isinstance(data, str):
+        return data
+    elif isinstance(data, list):
+        return ' '.join(flatten(item) for item in data)
+    else:
+        if 'children' in data:
+            return flatten(data['children'])
+        elif 'text' in data and data['text'].strip():
+            return data['text']
+        else:
+            return ''
+
+
+    
+def display_posts(posts):
+    global aibuffer
+    post_text=""
+    for i, post in enumerate(posts, 1):
+        
+        print(f"Post {i}")
+        data_str = post.get('text')
+        try:
+        # Try to parse and flatten the data as JSON
+            data = json.loads(data_str)
+            flattened_data = flatten(data)
+        except json.JSONDecodeError:
+            # If it's not valid JSON, treat it as plain text
+            flattened_data = data_str
+        print(f"Text: {flattened_data}")
+        aibuffer=f"{aibuffer}\n{flattened_data}"
+        
+        try:
+            imagelist=post.get('asset').get('images')
+            imageurl=imagelist[0]['original']
+            print(f"Image: {imageurl}")
+            
+            
+            # Download the image and save it locally
+            response = requests.get(imageurl, stream=True)
+            response.raise_for_status()
+            filename = f"temp_image_.jpg"
+            with open(filename, 'wb') as fd:
+                for block in response.iter_content(4096):
+                    fd.write(block)
+            time.sleep(1)  # Wait for a second
+            
+            # Convert the image to ASCII art
+            ascii_art = kit.image_to_ascii_art(filename)
+            print(ascii_art)
+            
+        except Exception as e:
+            print("No image. Error:", str(e))
+        if post.get('url'):
+            print(f"Imported from Twitter URL: {post.get('url')}")
+        print("----------")
+        post_text=post_text+f"{post.get('text')}\n"
+    return post_text
+
+
+
+
+
+
+
+
+def get_user_notifications():
+    api_endpoint = f"{base_url}/user/notifications"
+    response = requests.get(api_endpoint, headers=headers)
+    
+    if response.status_code == 200:
+        notifications = json.loads(response.text)  
+        #print(notifications)
+        print(f"You have {len(notifications['data'])} notifications.\n")
+        for i, notification in enumerate(notifications['data'], 1):
+            print(f"Notification {i}:")
+            print(f"ID: {notification.get('id')}")
+            print(f"Type: {notification.get('type')}")
+            print(f"Message: {notification.get('message')}")
+            print(f"Timestamp: {notification.get('createdAt')}") 
+            print(f"From: {notification.get('from')}")
+            print(f"To: {notification.get('to')}")
+            print("----------\n")
+    else:
+        print(f"Error fetching notifications: {response.status_code}")
+        return None
+
+def create_myriad_post(title, text_blocks, platform='myriad', visibility='public'):
+    api_endpoint = f"{base_url}/user/posts"
+
+    # obtain the user id of the current user
+    response = requests.get(f"{base_url}/users/{un}", headers=headers)
+    if response.status_code == 200:
+        user_data = json.loads(response.text)
+        created_by = user_data.get("id")
+    else:
+        print("Error retrieving user ID.")
+        return None
+
+    # Get the current date and time
+    now = datetime.now()
+
+    # Format the datetime object as a string
+    createdAt = now.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+    # Format the text as a JSON string
+    text = json.dumps([
+        {"type": "p", "children": [{"text": block}]} for block in text_blocks
+    ])
+
+    post_data = {
+        "rawText": '\n'.join(text_blocks),
+        "text": text,
+        "status": "published",
+        "selectedTimelineIds": []
+    }
+    
+    print(post_data)
+    response = requests.post(api_endpoint, headers=headers, json=post_data)
+    print(response)
+    if response.status_code == 200:
+        print("Post created successfully!")
+    else:
+        print(f"Error creating post: {response.status_code}")
 
 
 magiclink=""
@@ -287,191 +472,6 @@ if aimode:
     initialize_ai()
 
     
-pages="10"
-# exampl fr testin
-twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
-
-
-base_url = "https://api.myriad.social"
-
-base_url = "https://api.myriad.social"
-
-headers = {
-    'accept': 'application/json',
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + at,
-}
-
-base_url = "https://api.myriad.social"
-def search_user(username):
-    search_url = f"{base_url}/people/search"
-    response = requests.get(search_url, params={"id": user_id})
-
-    if response.status_code == 200:
-        users = response.json()
-        for user in users:
-            if user.get("username") == username:
-                return user
-    return None
-def user_id(username):
-    api_url = f"{base_url}/users/{username}"
-    print(api_url)
-    response = requests.get(api_url)
-    print(response)
-    if response.status_code == 200:
-        data = response.json()
-        user_id = data["id"]
-        print(f"User ID for {username}: {user_id}")
-        return user_id
-    else:
-        print(f"Error: {response.status_code}")
-        
-def get_all_posts():
-    posts_url = f"{base_url}/user/posts?pageLimit={pages}" #?page_number=
-    response = requests.get(posts_url)
-
-    if response.status_code == 200:
-        return response.json()
-    return None
-
-def filter_user_posts(posts, user_id):
-    if not user_id=="": 
-        return [post for post in posts['data'] if post.get("createdBy") == str(user_id)]
-    else:
-        return [post for post in posts['data']]
-
-import art
-import requests
-import time
-
-
-
-
-
-def flatten(data):
-    if isinstance(data, str):
-        return data
-    elif isinstance(data, list):
-        return ' '.join(flatten(item) for item in data)
-    else:
-        if 'children' in data:
-            return flatten(data['children'])
-        elif 'text' in data and data['text'].strip():
-            return data['text']
-        else:
-            return ''
-
-
-    
-def display_posts(posts):
-    global aibuffer
-    post_text=""
-    for i, post in enumerate(posts, 1):
-        
-        print(f"Post {i}")
-        data_str = post.get('text')
-        try:
-        # Try to parse and flatten the data as JSON
-            data = json.loads(data_str)
-            flattened_data = flatten(data)
-        except json.JSONDecodeError:
-            # If it's not valid JSON, treat it as plain text
-            flattened_data = data_str
-        print(f"Text: {flattened_data}")
-        aibuffer=f"{aibuffer}\n{flattened_data}"
-        
-        try:
-            imagelist=post.get('asset').get('images')
-            imageurl=imagelist[0]['original']
-            print(f"Image: {imageurl}")
-            
-            
-            # Download the image and save it locally
-            response = requests.get(imageurl, stream=True)
-            response.raise_for_status()
-            filename = f"temp_image_.jpg"
-            with open(filename, 'wb') as fd:
-                for block in response.iter_content(4096):
-                    fd.write(block)
-            time.sleep(1)  # Wait for a second
-            
-            # Convert the image to ASCII art
-            ascii_art = kit.image_to_ascii_art(filename)
-            print(ascii_art)
-            
-        except Exception as e:
-            print("No image. Error:", str(e))
-        if post.get('url'):
-            print(f"Imported from Twitter URL: {post.get('url')}")
-        print("----------")
-        post_text=post_text+f"{post.get('text')}\n"
-    return post_text
-
-
-
-
-
-
-
-
-def get_user_notifications():
-    api_endpoint = f"{base_url}/user/notifications"
-    response = requests.get(api_endpoint, headers=headers)
-    
-    if response.status_code == 200:
-        notifications = json.loads(response.text)  
-        #print(notifications)
-        print(f"You have {len(notifications['data'])} notifications.\n")
-        for i, notification in enumerate(notifications['data'], 1):
-            print(f"Notification {i}:")
-            print(f"ID: {notification.get('id')}")
-            print(f"Type: {notification.get('type')}")
-            print(f"Message: {notification.get('message')}")
-            print(f"Timestamp: {notification.get('createdAt')}") 
-            print(f"From: {notification.get('from')}")
-            print(f"To: {notification.get('to')}")
-            print("----------\n")
-    else:
-        print(f"Error fetching notifications: {response.status_code}")
-        return None
-
-def create_myriad_post(title, text_blocks, platform='myriad', visibility='public'):
-    api_endpoint = f"{base_url}/user/posts"
-
-    # obtain the user id of the current user
-    response = requests.get(f"{base_url}/users/{un}", headers=headers)
-    if response.status_code == 200:
-        user_data = json.loads(response.text)
-        created_by = user_data.get("id")
-    else:
-        print("Error retrieving user ID.")
-        return None
-
-    # Get the current date and time
-    now = datetime.now()
-
-    # Format the datetime object as a string
-    createdAt = now.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-
-    # Format the text as a JSON string
-    text = json.dumps([
-        {"type": "p", "children": [{"text": block}]} for block in text_blocks
-    ])
-
-    post_data = {
-        "rawText": '\n'.join(text_blocks),
-        "text": text,
-        "status": "published",
-        "selectedTimelineIds": []
-    }
-    
-    print(post_data)
-    response = requests.post(api_endpoint, headers=headers, json=post_data)
-    print(response)
-    if response.status_code == 200:
-        print("Post created successfully!")
-    else:
-        print(f"Error creating post: {response.status_code}")
 
 command=""
 while not command=="exit":
