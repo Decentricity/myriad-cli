@@ -107,8 +107,8 @@ if len(sys.argv) > 1:
         imported_post_data = import_twitter_post(twitter_url, un, [])
 
         # Display the imported post data
-        if imported_post_data:
-            print(json.dumps(imported_post_data, indent=2))
+        #if imported_post_data:
+        #    print(json.dumps(imported_post_data, indent=2))
 
         sys.exit()  # Exit after importing the Twitter post
 
