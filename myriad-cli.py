@@ -69,8 +69,7 @@ try:
 except:
     width=64
 print('♥' * width)
-# Define the filename
-filename = "settings.json"
+
 import json
 import sys
 
@@ -78,6 +77,17 @@ import sys
 filename = "myriad.json"
 at = None
 un = None
+# Try to load at, un and aimode from file
+try:
+    with open(filename, 'r') as file:
+        data = json.load(file)
+        at = data["at"]
+        un = data["un"]
+        aimode = data.get("aimode", None)
+except (FileNotFoundError, KeyError):
+    at = None
+    un = None
+    aimode = None
 
 # Check if there are command line arguments
 if len(sys.argv) > 1:
@@ -87,13 +97,7 @@ if len(sys.argv) > 1:
     if switch == "-i" and len(sys.argv) > 2:
         twitter_url = sys.argv[2]
 
-        # Try to load at and un from file
-        try:
-            with open(filename, 'r') as file:
-                data = json.load(file)
-                at = data["at"]
-                un = data["un"]
-        except (FileNotFoundError, KeyError):
+        if at is None or un is None:
             print("Please call myriad-cli first without parameters to log in")
             sys.exit()
 
@@ -112,18 +116,21 @@ if len(sys.argv) > 1:
 
         sys.exit()  # Exit after importing the Twitter post
 
+    elif switch == "-ai" and len(sys.argv) > 2:
+        user_input = ' '.join(sys.argv[2:])
+        
+        if at is None or un is None:
+            print("Please log in first.")
+            sys.exit()
 
-# Check if file exists
-if os.path.isfile(filename):
-    with open(filename, "r") as file:
-        settings = json.load(file)
-        at = settings.get("at", None)
-        un = settings.get("un", None)
-        aimode = settings.get("aimode", None)
-else:
-    at = None
-    un = None
-    aimode = None
+        if aimode:
+            # Load your saved authentication and other AI parts here.
+            # Then call your ai function.
+            # ai(user_input)
+            pass
+        else:
+            print("AI is not installed. Please reset the myriad cli and turn AI on.")
+            sys.exit()
 
 myriadlogo="""
   .=++=:   :+++=.
