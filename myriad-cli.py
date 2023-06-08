@@ -79,6 +79,60 @@ def import_twitter_post(twitter_url, importer, selected_timeline_ids):
         print(f"Error importing Twitter post: {response.status_code}")
         print(response.text)
         return None
+
+
+magiclink=""
+anonmode=False
+user_email=""
+
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    END = '\033[0m'
+    UNDERLINE = '\033[4m'
+
+try:
+    term_size = os.get_terminal_size()
+    width=term_size.columns
+except:
+    width=64
+print('♥' * width)
+
+import json
+import sys
+
+# Default values
+filename = "myriad.json"
+at = None
+un = None
+# Try to load at, un and aimode from file
+try:
+    with open(filename, 'r') as file:
+        data = json.load(file)
+        at = data["at"]
+        un = data["un"]
+        aimode = data.get("aimode", None)
+except (FileNotFoundError, KeyError):
+    at = None
+    un = None
+    aimode = None
+
+    
 pages="10"
 # exampl fr testin
 twitter_url = "https://twitter.com/decentricity/status/1655727173351743489"
@@ -265,58 +319,8 @@ def create_myriad_post(title, text_blocks, platform='myriad', visibility='public
     else:
         print(f"Error creating post: {response.status_code}")
 
-
-magiclink=""
-anonmode=False
-user_email=""
-
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    END = '\033[0m'
-    UNDERLINE = '\033[4m'
-
-try:
-    term_size = os.get_terminal_size()
-    width=term_size.columns
-except:
-    width=64
-print('♥' * width)
-
-import json
-import sys
-
-# Default values
-filename = "myriad.json"
-at = None
-un = None
-# Try to load at, un and aimode from file
-try:
-    with open(filename, 'r') as file:
-        data = json.load(file)
-        at = data["at"]
-        un = data["un"]
-        aimode = data.get("aimode", None)
-except (FileNotFoundError, KeyError):
-    at = None
-    un = None
-    aimode = None
-
+    
+    
 # Check if there are command line arguments
 if len(sys.argv) > 1:
     # The first argument is always the script name, so start from the second argument
