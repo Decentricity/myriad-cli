@@ -44,7 +44,6 @@ try:
 except:
     width=64
 print('♥' * width)
-
 # Define the filename
 filename = "settings.json"
 
@@ -75,99 +74,97 @@ Command Line Interface Client for https://app.myriad.social"""
 print(f"{bcolors.PURPLE}{myriadlogo}{bcolors.ENDC}")
 print('♥' * width)
 
-if un: while user_email=="":
-    print(f"{bcolors.BOLD}Please enter your Myriad email or type anon to try Myriad anonymously.{bcolors.ENDC}{bcolors.CYAN}\nIf you do not have a Myriad account, you can create one by going to https://app.myriad.social/login and clicking the Email button.\n{bcolors.BLUE}If you already have a Myriad account that you created with a crypto wallet, go to https://app.myriad.social/settings?section=email to add an email account. \n{bcolors.RED}For security reasons, the CLI client does not support wallet logins yet. (It will. Wen? SOON)")
-    print(f"\n{bcolors.ENDC}{bcolors.BOLD}Enter your Myriad email, or 'anon', below:")
-    user_email = input("> ")
-    
-if user_email=="anon": anonmode=True
-# Replace with your callback URL
-callback_url = "https://app.myriad.social/login"
+user_email = "" if not un else un
+anonmode = False
+magiclink = ""
 
-# Base URL for the Myriad API
-base_url = "https://api.myriad.social"
+# If username is not found in the settings file, ask the user for email
+if not un:
+    while user_email == "":
+        print(f"{bcolors.BOLD}Please enter your Myriad email or type anon to try Myriad anonymously.{bcolors.ENDC}{bcolors.CYAN}\nIf you do not have a Myriad account, you can create one by going to https://app.myriad.social/login and clicking the Email button.\n{bcolors.BLUE}If you already have a Myriad account that you created with a crypto wallet, go to https://app.myriad.social/settings?section=email to add an email account. \n{bcolors.RED}For security reasons, the CLI client does not support wallet logins yet. (It will. Wen? SOON)")
+        print(f"\n{bcolors.ENDC}{bcolors.BOLD}Enter your Myriad email, or 'anon', below:")
+        user_email = input("> ")
 
-# Function to send a magic link to the user's email address
-def send_magic_link(email, callback):
-    global magiclink
-    # Myriad API endpoint for sending a magic link
-    api_endpoint = f"{base_url}/authentication/otp/email"
+    if user_email == "anon":
+        anonmode = True
 
-    # Prepare the payload with the email address and callback URL
-    payload = {
-        "email": email,
-        "callbackURL": callback
-    }
+    callback_url = "https://app.myriad.social/login"
+    base_url = "https://api.myriad.social"
 
-    # Send a POST request to the Myriad API to send a magic link
-    response = requests.post(api_endpoint, json=payload)
+    # Function to send a magic link to the user's email address
+    def send_magic_link(email, callback):
+        global magiclink
+        # Myriad API endpoint for sending a magic link
+        api_endpoint = f"{base_url}/authentication/otp/email"
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        print(f"Magic link successfully sent to {email}.")
-        print(f"Click on that link first before continuing.")
-        print(f"Then copy the link from the email and put em here:")
-        magiclink=input(">")
-    else:
-        print(f"Error sending magic link: {response.status_code}")
-        print(response.text)
-        return response.status_code
+        # Prepare the payload with the email address and callback URL
+        payload = {
+            "email": email,
+            "callbackURL": callback
+        }
 
-        
-def authenticate(token):
-    api_endpoint =f"{base_url}/authentication/login/otp"
-    payload = {
-        "token": token
-    }
-    response=requests.post(api_endpoint, json=payload)
+        # Send a POST request to the Myriad API to send a magic link
+        response = requests.post(api_endpoint, json=payload)
 
-    if response.status_code == 200:
-        return response.json()
-    return None
-    
-if un and not anonmode:
-# Send a magic link to the user's email address
-    try:
-        statcode=send_magic_link(user_email, callback_url)
-    except:
-        user_email=""
-        while user_email=="": 
-            user_email = input("Unable to send email. Check your email address and give it to me again: ")
-            statcode=send_magic_link(user_email, callback_url)
-    while statcode==422:
-        user_email = input("Email invalid. Check your email address and give it to me again: ")
-        statcode=send_magic_link(user_email, callback_url)
-    
-    auth=magiclink.replace(callback_url+"?token=","")
-
-#print(auth)
-
-    accesstoken=authenticate(auth)
-#print(accesstoken)
+        # Check if the request was successful
+        if response.status_code == 200:
+            print(f"Magic link successfully sent to {email}.")
+            print(f"Click on that link first before continuing.")
+            print(f"Then copy the link from the email and put em here:")
+            magiclink = input(">")
+        else:
+            print(f"Error sending magic link: {response.status_code}")
+            print(response.text)
+            return response.status_code
 
 
+    def authenticate(token):
+        api_endpoint = f"{base_url}/authentication/login/otp"
+        payload = {
+            "token": token
+        }
+        response = requests.post(api_endpoint, json=payload)
 
+        if response.status_code == 200:
+            return response.json()
+        return None
 
+    if not anonmode:
+        # Send a magic link to the user's email address
+        try:
+            statcode = send_magic_link(user_email, callback_url)
+        except:
+            user_email = ""
+            while user_email == "":
+                user_email = input("Unable to send email. Check your email address and give it to me again: ")
+                statcode = send_magic_link(user_email, callback_url)
+        while statcode == 422:
+            user_email = input("Email invalid. Check your email address and give it to me again: ")
+            statcode = send_magic_link(user_email, callback_url)
 
-if not at and not anonmode: 
-    at=(accesstoken.get('token').get('accessToken'))
-else:
-    at=""
-#print(at)
-if not not un and not anonmode: 
-    un=(accesstoken.get('user').get('username'))
-else:
-    un=""
-    
+        auth = magiclink.replace(callback_url + "?token=", "")
+
+        accesstoken = authenticate(auth)
+
+        if not anonmode:
+            at = (accesstoken.get('token').get('accessToken'))
+        else:
+            at = ""
+        if not anonmode:
+            un = (accesstoken.get('user').get('username'))
+        else:
+            un = ""
+
 if aimode is None:
-    ai_=input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
-    if ai_=="y" or ai_.lower()=="yes" or ai_=="Y": 
-        aimode=True
+    ai_ = input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
+    if ai_ == "y" or ai_.lower() == "yes" or ai_ == "Y":
+        aimode = True
+
 # Write back at, un, and aimode to the settings file
 with open(filename, "w") as file:
     json.dump({"at": at, "un": un, "aimode": aimode}, file)
-    
-if aimode: 
+
+if aimode:
     import subprocess
     import pkg_resources
 
