@@ -33,7 +33,7 @@ def initialize_ai():
     for package in REQUIRED_PACKAGES:
         try:
             dist = pkg_resources.get_distribution(package)
-            print('{} ({}) is installed'.format(dist.key, dist.version))
+            #print('{} ({}) is installed'.format(dist.key, dist.version))
         except pkg_resources.DistributionNotFound:
             print('{} is NOT installed. Installing...'.format(package))
             subprocess.call(['pip', 'install', package])
