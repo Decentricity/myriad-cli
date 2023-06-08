@@ -37,6 +37,18 @@ def initialize_ai():
     model = AutoModelForQuestionAnswering.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
+def ai(user_input):
+    global model_name
+    global aibuffer
+    # a) Get predictions
+    nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
+    QA_input = {
+        'question': user_input,
+        'context': aibuffer
+    }
+    res = nlp(QA_input)
+    print(res)
+    print(res['answer'])
 
 
 def import_twitter_post(twitter_url, importer, selected_timeline_ids):
@@ -152,8 +164,10 @@ if len(sys.argv) > 1:
         if aimode:
             # Load your saved authentication and other AI parts here.
             # Then call your ai function.
-            # ai(user_input)
-            pass
+            
+            initialize_ai()
+            ai(user_input)
+            sys.exit()
         else:
             print("AI is not installed. Please reset the myriad cli and turn AI on.")
             sys.exit()
@@ -394,18 +408,6 @@ def display_posts(posts):
     return post_text
 
 
-def ai(user_input):
-    global model_name
-    global aibuffer
-    # a) Get predictions
-    nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
-    QA_input = {
-        'question': user_input,
-        'context': aibuffer
-    }
-    res = nlp(QA_input)
-    print(res)
-    print(res['answer'])
 
 
 
