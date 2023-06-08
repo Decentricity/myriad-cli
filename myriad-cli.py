@@ -12,7 +12,12 @@ import pickle
 import html
 
 from datetime import datetime
-
+# Load aibuffer from file at start
+try:
+    with open("aibuffer.pickle", "rb") as f:
+        aibuffer = pickle.load(f)
+except (OSError, IOError) as e:
+    aibuffer = ""
 def initialize_ai():
     global AutoModelForQuestionAnswering, AutoTokenizer, pipeline, model_name, model, tokenizer, central_dogma
     from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
@@ -356,12 +361,7 @@ def flatten(data):
         else:
             return ''
 
-# Load aibuffer from file at start
-try:
-    with open("aibuffer.pickle", "rb") as f:
-        aibuffer = pickle.load(f)
-except (OSError, IOError) as e:
-    aibuffer = ""
+
     
 def display_posts(posts):
     global aibuffer
