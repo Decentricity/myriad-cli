@@ -146,10 +146,21 @@ else:
 aimode=False
 ai_=input("Would you like to turn on Myriad's self-hosted AI? This will install a relatively large LLM on your system.\n Make sure you have around 8 GB of free RAM, and either an NVIDIA GPU or an 8-core CPU. \nTested on decenter-1: Intel Evo i7, 16GB RAM, Intel GPU & decenter-2: Intel i9 / 32 cores, 32GB RAM, NVIDIA RTX 4070 Ti.\n(y/n)")
 if ai_=="y" or ai_.lower()=="yes" or ai_=="Y": aimode=True
-    
-    
 
 if aimode: 
+    import subprocess
+    import pkg_resources
+
+    REQUIRED_PACKAGES = ['transformers', 'torch']
+
+    for package in REQUIRED_PACKAGES:
+        try:
+            dist = pkg_resources.get_distribution(package)
+            print('{} ({}) is installed'.format(dist.key, dist.version))
+        except pkg_resources.DistributionNotFound:
+            print('{} is NOT installed. Installing...'.format(package))
+            subprocess.call(['pip', 'install', package])
+
     from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
     model_name = "deepset/tinyroberta-squad2"
 
@@ -159,6 +170,7 @@ if aimode:
     # b) Load model & tokenizer
     model = AutoModelForQuestionAnswering.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+
     
 pages="10"
 # exampl fr testin
