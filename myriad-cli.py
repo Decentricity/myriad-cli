@@ -14,7 +14,7 @@ import html
 from datetime import datetime
 
 def initialize_ai():
-    global AutoModelForQuestionAnswering, AutoTokenizer, pipeline
+    global AutoModelForQuestionAnswering, AutoTokenizer, pipeline, model_name, model, tokenizer, central_dogma
     from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
     import subprocess
     import pkg_resources
