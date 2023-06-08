@@ -8,7 +8,7 @@ import random
 import pywhatkit as kit
 from PIL import Image
 from getpass import getpass
-
+import pickle
 import html
 
 from datetime import datetime
@@ -328,7 +328,13 @@ def flatten(data):
         else:
             return ''
 
-aibuffer=""
+# Load aibuffer from file at start
+try:
+    with open("aibuffer.pickle", "rb") as f:
+        aibuffer = pickle.load(f)
+except (OSError, IOError) as e:
+    aibuffer = ""
+    
 def display_posts(posts):
     global aibuffer
     post_text=""
@@ -462,6 +468,13 @@ while not command=="exit":
         buffercheck="There is nothing in buffer, you should go see some posts first."
     else:
         buffercheck=""
+        
+    try:
+        with open("aibuffer.pickle", "wb") as f:
+            pickle.dump(aibuffer, f)
+    except (OSError, IOError) as e:
+        print("Error saving aibuffer:", str(e))
+        
     if aimode: print(f"ai: Ask the AI something. {buffercheck}")
     print(f"exit: Go back to the shell.\n\nCurrently searching within last {pages} posts. Type ps to change this setting.")
     command = input(f"> {bcolors.ENDC}")
