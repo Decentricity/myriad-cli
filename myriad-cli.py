@@ -13,6 +13,31 @@ import html
 
 from datetime import datetime
 
+def import_twitter_post(twitter_url, importer, selected_timeline_ids):
+    base_url = "https://api.myriad.social"
+    api_endpoint = f"{base_url}/user/posts/import"
+    
+
+    data = {
+        "url": twitter_url,
+        "importer": importer,
+        "selectedTimelineIds": selected_timeline_ids,
+    }
+    
+    # Send a POST request to the Myriad API to import the Twitter post
+    response = requests.post(api_endpoint, headers=headers, json=data)
+    
+
+    if response.status_code == 200:
+        print("Twitter post successfully imported into Myriad.")
+        imported_post_data = response.json()
+        return imported_post_data
+    else:
+        print(f"Error importing Twitter post: {response.status_code}")
+        print(response.text)
+        return None
+
+
 magiclink=""
 anonmode=False
 user_email=""
@@ -46,6 +71,47 @@ except:
 print('♥' * width)
 # Define the filename
 filename = "settings.json"
+import json
+import sys
+
+# Default values
+filename = "myriad.json"
+at = None
+un = None
+
+# Check if there are command line arguments
+if len(sys.argv) > 1:
+    # The first argument is always the script name, so start from the second argument
+    switch = sys.argv[1]
+
+    if switch == "-i" and len(sys.argv) > 2:
+        twitter_url = sys.argv[2]
+
+        # Try to load at and un from file
+        try:
+            with open(filename, 'r') as file:
+                data = json.load(file)
+                at = data["at"]
+                un = data["un"]
+        except (FileNotFoundError, KeyError):
+            print("Please call myriad-cli first without parameters to log in")
+            sys.exit()
+
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + at,
+        }
+
+        # Call the import function
+        imported_post_data = import_twitter_post(twitter_url, un, [])
+
+        # Display the imported post data
+        if imported_post_data:
+            print(json.dumps(imported_post_data, indent=2))
+
+        sys.exit()  # Exit after importing the Twitter post
+
 
 # Check if file exists
 if os.path.isfile(filename):
@@ -323,29 +389,7 @@ def ai(user_input):
 
 
 
-def import_twitter_post(twitter_url, importer, selected_timeline_ids):
-    base_url = "https://api.myriad.social"
-    api_endpoint = f"{base_url}/user/posts/import"
-    
 
-    data = {
-        "url": twitter_url,
-        "importer": importer,
-        "selectedTimelineIds": selected_timeline_ids,
-    }
-    
-    # Send a POST request to the Myriad API to import the Twitter post
-    response = requests.post(api_endpoint, headers=headers, json=data)
-    
-
-    if response.status_code == 200:
-        print("Twitter post successfully imported into Myriad.")
-        imported_post_data = response.json()
-        return imported_post_data
-    else:
-        print(f"Error importing Twitter post: {response.status_code}")
-        print(response.text)
-        return None
 
 
 def get_user_notifications():
