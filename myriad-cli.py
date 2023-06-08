@@ -14,15 +14,16 @@ import html
 from datetime import datetime
 
 def initialize_ai():
-    global REQUIRED_PACKAGES, model_name, central_dogma, model, tokenizer
-
+    global AutoModelForQuestionAnswering, AutoTokenizer, pipeline
+    from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
     import subprocess
     import pkg_resources
-    from transformers import AutoModelForQuestionAnswering, AutoTokenizer, pipeline
 
     REQUIRED_PACKAGES = ['transformers', 'torch']
     model_name = "deepset/tinyroberta-squad2"
-    central_dogma = "I don't know anything yet."
+    central_dogma = """
+    I don't know anything yet.
+    """
 
     for package in REQUIRED_PACKAGES:
         try:
@@ -35,6 +36,7 @@ def initialize_ai():
     # Load model & tokenizer
     model = AutoModelForQuestionAnswering.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
+
 
 
 def import_twitter_post(twitter_url, importer, selected_timeline_ids):
