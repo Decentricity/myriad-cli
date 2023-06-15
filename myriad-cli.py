@@ -56,29 +56,7 @@ def ai(user_input):
     print(res['answer'])
 
 
-def import_twitter_post(twitter_url, importer, selected_timeline_ids):
-    base_url = "https://api.myriad.social"
-    api_endpoint = f"{base_url}/user/posts/import"
-    
 
-    data = {
-        "url": twitter_url,
-        "importer": importer,
-        "selectedTimelineIds": selected_timeline_ids,
-    }
-    
-    # Send a POST request to the Myriad API to import the Twitter post
-    response = requests.post(api_endpoint, headers=headers, json=data)
-    
-
-    if response.status_code == 200:
-        print("Twitter post successfully imported into Myriad.")
-        imported_post_data = response.json()
-        return imported_post_data
-    else:
-        print(f"Error importing Twitter post: {response.status_code}")
-        print(response.text)
-        return None
 
 
 magiclink=""
@@ -270,7 +248,32 @@ def get_user_notifications():
     else:
         print(f"Error fetching notifications: {response.status_code}")
         return None
+    
+def import_twitter_post(twitter_url, importer, selected_timeline_ids):
+    base_url = "https://api.myriad.social"
+    api_endpoint = f"{base_url}/user/posts/import"
+    
 
+    data = {
+        "url": twitter_url,
+        "importer": importer,
+        "selectedTimelineIds": selected_timeline_ids,
+    }
+    
+    # Send a POST request to the Myriad API to import the Twitter post
+    response = requests.post(api_endpoint, headers=headers, json=data)
+    
+
+    if response.status_code == 200:
+        print("Twitter post successfully imported into Myriad.")
+        imported_post_data = response.json()
+        return imported_post_data
+    else:
+        print(f"Error importing Twitter post: {response.status_code}")
+        print(response.text)
+        return None
+    
+    
 def create_myriad_post(title, text_blocks, platform='myriad', visibility='public'):
     api_endpoint = f"{base_url}/user/posts"
 
