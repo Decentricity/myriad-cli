@@ -70,7 +70,7 @@ if ! dpkg-query -W python3-dev; then
 fi
 
 # List of python dependencies
-declare -a arr=("requests" "pywhatkit" "pillow" "transformers" "torch")
+declare -a arr=("requests" "pywhatkit" "pillow")
 
 for i in "${arr[@]}"
 do
